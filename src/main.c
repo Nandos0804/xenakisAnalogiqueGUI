@@ -1,4 +1,12 @@
 #include <gtk/gtk.h>
+#include "csound.h"
+
+const char *orc_text =
+ "instr 1 \n"
+ " out(linen(oscili(p4,p5),0.1,p3,0.1)) \n"
+ "endin \n";
+const char *sco_text = "i1 0 5 1000 440 \n";
+
 
 static void print_hello(GtkWidget *widget, gpointer data)
 {
@@ -24,13 +32,31 @@ static void activate(GtkApplication *app, gpointer user_data)
 
 int main(int argc, char **argv)
 {
-  GtkApplication *app;
-  int status;
+  //GtkApplication *app;
+  //int status;
 
-  app = gtk_application_new("org.gtk.example", G_APPLICATION_DEFAULT_FLAGS);
-  g_signal_connect(app, "activate", G_CALLBACK(activate), NULL);
-  status = g_application_run(G_APPLICATION(app), argc, argv);
-  g_object_unref(app);
+  //app = gtk_application_new("org.gtk.example", G_APPLICATION_DEFAULT_FLAGS);
+  //g_signal_connect(app, "activate", G_CALLBACK(activate), NULL);
+  //status = g_application_run(G_APPLICATION(app), argc, argv);
+  //g_object_unref(app);
 
-  return status;
+  //return status;
+  
+  void *csound = csoundCreate(0);
+  int result = csoundSetOption(csound, "-d");
+  result = csoundSetOption(csound, "-odac");
+  result = csoundStart(csound);
+  result = csoundCompileOrc(csound, orc_text);
+  result = csoundReadScore(csound, sco_text);
+  while (1) {
+     result = csoundPerformKsmps(csound);
+     if (result != 0) {
+        break;
+     }
+  }
+  result = csoundCleanup(csound);
+  csoundReset(csound);
+  csoundDestroy(csound);
+ 
+ return result;
 }
