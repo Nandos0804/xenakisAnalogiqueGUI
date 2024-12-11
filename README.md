@@ -6,3 +6,9 @@ A tool to create csound score, with gui
 - cmake ..
 - make
 - ./xenakisAnalogiqueGUI
+
+## TODO
+
+`https://github.com/ttroy50/cmake-examples/tree/master/01-basic`
+
+studiare li per migliorare 
